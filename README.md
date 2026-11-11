@@ -2,7 +2,7 @@
 
 > **TECHNOPIA 2.0** | AI-Powered University Campus Helpdesk Challenge  
 > School of Computer Science & Engineering, Presidency University  
-> **Duration:** 60 Minutes (10:30 AM – 11:30 AM) | **Venue:** LG07
+> 
 
 ---
 
