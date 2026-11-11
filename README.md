@@ -110,12 +110,5 @@ Open your browser and navigate to:
 
 ---
 
-## 🏆 Evaluation Alignment (30 Marks)
-
-1. **UI/UX Design & Creativity (10 Marks):** Clean, accessible portal layout with Presidency University branding, 8 responsive category cards, quick-prompt pills, live assistant status indicator, and animated chat flow.
-2. **Technical Implementation (10 Marks):** Robust FastAPI asynchronous backend, resilient error handling, secure server-side API key handling, clean modular architecture.
-3. **AI Integration (10 Marks):** Accurate prompt grounding with student handbook context, strict anti-hallucination guardrails, high semantic relevance, fast response latency using `gemini-3.8-flash`.
-
----
 
 Built for **TECHNOPIA 2.0** • School of Computer Science & Engineering • Presidency University
