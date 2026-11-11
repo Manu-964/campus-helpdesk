@@ -12,7 +12,13 @@ load_dotenv()
 app = FastAPI(title="Campus Helpdesk API")
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-MODEL = "gemini-3.8-flash"
+CANDIDATE_MODELS = [
+    "gemini-3.5-flash-lite",
+    "gemini-3.6-flash",
+    "gemini-3.7-flash",
+    "gemini-3.5-flash",
+    "gemini-3.8-flash",
+]
 
 # ─────────────────────────────────────────────────────────────────────────────
 #  KNOWLEDGE BASE — extracted from Presidency University Student Handbook 2025-26
@@ -263,34 +269,39 @@ async def read_root():
 
 @app.post("/api/chat")
 async def chat(request: QueryRequest):
-    try:
-        user_message = request.message.strip()
-        if not user_message:
-            return JSONResponse({"response": "Please enter a question."}, status_code=400)
+    user_message = request.message.strip()
+    if not user_message:
+        return JSONResponse({"response": "Please enter a question."}, status_code=400)
 
-        response = client.models.generate_content(
-            model=MODEL,
-            contents=user_message,
-            config=types.GenerateContentConfig(
-                system_instruction=KNOWLEDGE_BASE,
-                temperature=0.2,
-                max_output_tokens=600,
-            ),
-        )
+    last_error = None
+    for model_name in CANDIDATE_MODELS:
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=user_message,
+                config=types.GenerateContentConfig(
+                    system_instruction=KNOWLEDGE_BASE,
+                    temperature=0.2,
+                    max_output_tokens=600,
+                ),
+            )
+            if response and response.text:
+                return JSONResponse({"response": response.text, "status": "success", "model": model_name})
+        except Exception as e:
+            last_error = str(e)
+            print(f"Model {model_name} failed: {e}")
+            continue
 
-        return JSONResponse({"response": response.text, "status": "success"})
-
-    except Exception as e:
-        print(f"Error: {e}")
-        return JSONResponse(
-            {"response": "⚠️ I'm experiencing technical difficulties. Please try again shortly."},
-            status_code=500,
-        )
+    print(f"All models failed. Last error: {last_error}")
+    return JSONResponse(
+        {"response": "⚠️ I'm experiencing technical difficulties. Please try again shortly."},
+        status_code=500,
+    )
 
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "service": "Campus Helpdesk AI", "model": MODEL}
+    return {"status": "ok", "service": "Campus Helpdesk AI", "models": CANDIDATE_MODELS}
 
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
