@@ -13,7 +13,7 @@ app = FastAPI(title="Campus Helpdesk API")
 
 # Configure Gemini (new SDK)
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-MODEL = "gemini-2.0-flash"
+MODEL = "gemini-3.8-flash"
 
 # Knowledge base for Presidency University
 SYSTEM_INSTRUCTION = """You are an AI-powered Campus Helpdesk assistant for Presidency University.
